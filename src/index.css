@@ -1,0 +1,445 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 240 60% 50%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 270 60% 40%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 330 70% 50%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 230 60% 60%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 270 60% 50%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 330 70% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply container px-4 mx-auto max-w-7xl;
+  }
+  
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+  
+  .heading-xl {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  }
+  
+  .heading-lg {
+    @apply text-3xl md:text-4xl font-bold;
+  }
+  
+  .heading-md {
+    @apply text-2xl md:text-3xl font-bold;
+  }
+  
+  .heading-sm {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+  
+  .paragraph {
+    @apply text-base md:text-lg text-muted-foreground;
+  }
+  
+  .nav-link {
+    @apply relative px-1 py-2 text-foreground hover:text-primary transition-colors duration-200 
+           after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 
+           after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right 
+           after:transition-transform after:duration-300 hover:after:scale-x-100 
+           hover:after:origin-bottom-left dark:after:bg-primary;
+  }
+  
+  .nav-link-active {
+    @apply text-primary after:scale-x-100;
+  }
+
+  .btn-primary {
+    @apply bg-portfolio-blue hover:bg-opacity-90 text-white px-5 py-2.5 rounded-md transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-portfolio-purple hover:bg-opacity-90 text-white px-5 py-2.5 rounded-md transition-all;
+  }
+  
+  .btn-outline {
+    @apply border border-portfolio-blue text-portfolio-blue hover:bg-portfolio-blue hover:text-white px-5 py-2.5 rounded-md transition-all dark:border-portfolio-purple dark:text-portfolio-purple dark:hover:bg-portfolio-purple;
+  }
+  
+  /* Dark mode specific effects */
+  .theme-toggle {
+    @apply relative overflow-hidden;
+  }
+  
+  .theme-toggle::before {
+    @apply content-[''] absolute inset-0 rounded-full transition-transform duration-300 scale-0 opacity-25;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  }
+  
+  .theme-toggle:hover::before {
+    @apply scale-150;
+  }
+  
+  /* Glass effect for cards in dark mode */
+  .dark .glass-card {
+    @apply backdrop-blur-md bg-white/5 border border-white/10;
+  }
+  
+  /* Improved dark mode card styling */
+  .dark .card-dark {
+    @apply bg-gray-800/60 border-gray-700/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.3)];
+  }
+  
+  /* Glow effect for primary elements in dark mode */
+  .dark .glow-effect {
+    @apply relative;
+  }
+  
+  .dark .glow-effect::after {
+    @apply content-[''] absolute inset-0 rounded-md blur-sm opacity-50 -z-10;
+    background: var(--primary);
+  }
+  
+  /* Enhanced dark mode text gradients */
+  .dark .dark-gradient-text {
+    @apply bg-gradient-to-r from-portfolio-purple via-portfolio-blue to-portfolio-purple text-transparent bg-clip-text;
+  }
+  
+  /* Dark mode section backgrounds */
+  .dark .section-dark-1 {
+    @apply bg-gray-900;
+  }
+  
+  .dark .section-dark-2 {
+    @apply bg-gray-800;
+  }
+  
+  /* Enhanced dark mode buttons */
+  .dark .button-dark-glow {
+    @apply relative overflow-hidden;
+  }
+  
+  .dark .button-dark-glow::before {
+    @apply content-[''] absolute inset-0 rounded-md opacity-0 transition-opacity duration-300;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  }
+  
+  .dark .button-dark-glow:hover::before {
+    @apply opacity-30;
+  }
+  
+  /* Dark mode card animations */
+  .dark .card-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .dark .card-hover:hover {
+    @apply bg-gray-800 border-portfolio-blue/30 shadow-[0_0_15px_rgba(67,97,238,0.15)];
+  }
+  
+  /* Dark mode border glow */
+  .dark .dark-border-glow {
+    @apply border border-transparent transition-all duration-300;
+  }
+  
+  .dark .dark-border-glow:hover {
+    @apply border-portfolio-purple/40 shadow-[0_0_10px_rgba(114,9,183,0.2)];
+  }
+  
+  /* Dark mode text gradient */
+  .dark .dark-text-gradient {
+    @apply bg-gradient-to-r from-portfolio-purple/90 via-portfolio-blue/90 to-portfolio-purple/90 bg-clip-text text-transparent;
+  }
+  
+  /* Dark mode image filters */
+  .dark .dark-img-filter {
+    @apply brightness-90 contrast-[1.1];
+  }
+  
+  /* Enhanced Animation Classes */
+  .btn-animated {
+    @apply relative overflow-hidden transition-all duration-300 transform hover:translate-y-[-3px] active:translate-y-[1px];
+  }
+  
+  .btn-animated::after {
+    @apply content-[''] absolute w-full h-full top-0 left-0 bg-white opacity-0 transition-opacity duration-300;
+    mix-blend-mode: overlay;
+  }
+  
+  .btn-animated:hover::after {
+    @apply opacity-20;
+  }
+  
+  .btn-animated:active::after {
+    @apply opacity-30;
+  }
+  
+  /* Card animations */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-2;
+  }
+  
+  /* Text reveal animation */
+  .text-reveal {
+    @apply opacity-0;
+    animation: reveal 0.6s forwards;
+  }
+  
+  /* Section entrance animation */
+  .section-animate {
+    @apply opacity-0;
+    animation: sectionEntrance 0.8s ease-out forwards;
+  }
+  
+  /* Shimmer effect for cards */
+  .shimmer {
+    @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent;
+  }
+  
+  /* 3D hover effect for cards */
+  .card-3d {
+    @apply transition-transform duration-300 perspective-1000;
+  }
+  
+  /* Create a glowing border effect */
+  .glow-border {
+    @apply relative;
+  }
+  
+  .glow-border::before {
+    @apply content-[''] absolute -inset-0.5 rounded-lg bg-gradient-to-r from-portfolio-blue via-portfolio-purple to-portfolio-pink opacity-0 transition-opacity duration-300;
+  }
+  
+  .glow-border:hover::before {
+    @apply opacity-70 blur-sm;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  /* Text effects */
+  .text-gradient {
+    @apply bg-gradient-to-r from-portfolio-blue to-portfolio-purple text-transparent bg-clip-text;
+  }
+  
+  .dark .text-gradient-dark {
+    @apply bg-gradient-to-r from-portfolio-blue/80 to-portfolio-purple/80 text-transparent bg-clip-text;
+  }
+  
+  /* New animation keyframes */
+  @keyframes reveal {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes sectionEntrance {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+  
+  /* Perspective utility for 3D effects */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  /* Add staggered animations */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  
+  /* Custom cursors */
+  .cursor-glow {
+    cursor: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='8' fill='%234361ee' fill-opacity='0.5'/%3E%3C/svg%3E"), auto;
+  }
+  
+  /* Scale on hover */
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  /* Spin animation */
+  .animate-spin-slow {
+    animation: spin 6s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Slide in animation */
+  .slide-in-right {
+    animation: slideInRight 0.5s forwards;
+  }
+  
+  @keyframes slideInRight {
+    from { transform: translateX(50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.5s forwards;
+  }
+  
+  @keyframes slideInLeft {
+    from { transform: translateX(-50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  .slide-in-bottom {
+    animation: slideInBottom 0.5s forwards;
+  }
+  
+  @keyframes slideInBottom {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Background animations */
+  .bg-animate {
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+  
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Typing effect */
+  .typing {
+    border-right: 2px solid;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: currentColor; }
+  }
+  
+  /* Dark mode specific utilities */
+  .dark-card-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .dark .dark-card-hover:hover {
+    @apply bg-gray-800 border-portfolio-blue/30 shadow-[0_0_15px_rgba(67,97,238,0.15)];
+  }
+  
+  .dark .dark-border-glow {
+    @apply border border-transparent transition-all duration-300;
+  }
+  
+  .dark .dark-border-glow:hover {
+    @apply border-portfolio-purple/40 shadow-[0_0_10px_rgba(114,9,183,0.2)];
+  }
+  
+  .dark .dark-text-gradient {
+    @apply bg-gradient-to-r from-portfolio-purple/90 via-portfolio-blue/90 to-portfolio-purple/90 bg-clip-text text-transparent;
+  }
+  
+  /* Dark mode image filters - alternative implementation */
+  .dark .dark-img-filter {
+    filter: brightness(0.9) contrast(1.1);
+  }
+}

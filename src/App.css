@@ -1,0 +1,133 @@
+
+/* Keeping only the essential styles */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Add animation keyframes */
+@keyframes float-rotate {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(67, 97, 238, 0.5));
+  }
+}
+
+@keyframes border-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(67, 97, 238, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(67, 97, 238, 0.5);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Dark mode specific animations */
+@keyframes dark-pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(114, 9, 183, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(114, 9, 183, 0.5));
+  }
+}
+
+@keyframes dark-border-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(114, 9, 183, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(114, 9, 183, 0.5);
+  }
+}
+
+@keyframes dark-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-float-rotate {
+  animation: float-rotate 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s infinite;
+}
+
+.dark .animate-pulse-glow {
+  animation: dark-pulse-glow 3s infinite;
+}
+
+.animate-border-glow {
+  animation: border-glow 2s infinite;
+}
+
+.dark .animate-border-glow {
+  animation: dark-border-glow 2s infinite;
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+.dark .animate-gradient-shift {
+  animation: dark-gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+/* Perspective for 3D effects */
+.perspective {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion) {
+  /* Disable animations for users who prefer reduced motion */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Dark mode transitions */
+.dark * {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow;
+  transition-duration: 200ms;
+}
