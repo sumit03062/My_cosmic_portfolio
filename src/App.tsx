@@ -13,6 +13,7 @@ import ChatPage from "./pages/Chat";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
+
 const queryClient = new QueryClient();
 
 const App = () => (

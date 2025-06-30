@@ -1,61 +1,110 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 
-const Hero: React.FC = () => {
+const Hero = () => {
   return (
-    <section className="relative bg-gradient-to-br from-portfolio-blue/10 via-white to-portfolio-purple/10 dark:from-portfolio-blue/30 dark:via-black/20 dark:to-portfolio-purple/30 pt-28 pb-20 md:pt-40 md:pb-32 overflow-hidden bg-animate">
-      <div className="container-custom relative z-10">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <div className="flex items-center justify-center mb-4 opacity-0 animate-fade-in" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
-            <div className="flex items-center p-2 px-4 rounded-full bg-portfolio-blue/10 dark:bg-portfolio-blue/20">
-              <Sparkles size={18} className="text-portfolio-blue dark:text-portfolio-purple mr-2 animate-pulse-slow" />
-              <span className="text-sm font-medium text-portfolio-blue dark:text-portfolio-purple">Portfolio 2025</span>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+      {/* Animated Background Shapes */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Main gradient shape */}
+        <div className="absolute top-0 left-0 w-full h-full">
+          <svg width="999" height="931" className="absolute top-0 left-0 w-full h-full object-cover opacity-30 dark:opacity-20" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient x1="92.827%" y1="0%" x2="53.422%" y2="80.087%" id="hero-shape-a">
+                <stop stopColor="#F9425F" offset="0%"></stop>
+                <stop stopColor="#F97C58" stopOpacity="0" offset="100%"></stop>
+              </linearGradient>
+              <linearGradient x1="92.827%" y1="0%" x2="53.406%" y2="80.12%" id="hero-shape-b">
+                <stop stopColor="#47A1F9" offset="0%"></stop>
+                <stop stopColor="#F9425F" stopOpacity="0" offset="80.532%"></stop>
+                <stop stopColor="#FDFFDA" stopOpacity="0" offset="100%"></stop>
+              </linearGradient>
+            </defs>
+            <g fill="none" fillRule="evenodd">
+              <path d="M680.188 0c-23.36 69.79-58.473 98.3-105.34 85.531-70.301-19.152-189.723-21.734-252.399 91.442-62.676 113.175-144.097 167.832-215.195 118.57C59.855 262.702 24.104 287.85 0 370.988L306.184 566.41c207.164-4.242 305.67-51.612 295.52-142.11-10.152-90.497 34.533-163.55 134.054-219.16l4.512-119.609L680.188 0z" fill="url(#hero-shape-a)" className="animate-pulse"></path>
+              <path d="M817.188 222c-23.36 69.79-58.473 98.3-105.34 85.531-70.301-19.152-189.723-21.734-252.399 91.442-62.676 113.175-144.097 167.832-215.195 118.57-47.399-32.841-83.15-7.693-107.254 75.445L443.184 788.41c207.164-4.242 305.67-51.612 295.52-142.11-10.152-90.497 34.533-163.55 134.054-219.16l4.512-119.609L817.188 222z" fill="url(#hero-shape-b)" className="animate-pulse" style={{ animationDelay: '1s' }}></path>
+            </g>
+          </svg>
+        </div>
+
+        {/* Floating dots */}
+        <div className="absolute top-20 left-10 w-3 h-3 bg-blue-400 dark:bg-blue-300 rounded-full animate-bounce"></div>
+        <div className="absolute top-32 right-20 w-2 h-2 bg-pink-400 dark:bg-pink-300 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute bottom-32 left-1/4 w-4 h-4 bg-yellow-300 dark:bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-48 right-1/3 w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Hero Content */}
+          <div className="text-center lg:text-left space-y-8">
+            <div className="space-y-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+                Crafting digital experiences for{' '}
+                <span className="bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
+                  brands & innovators
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl">
+                I help businesses and creators stand out with sleek websites, intuitive UI/UX design, tailored software, and engaging blogs — all optimized for performance and impact.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link
+                to="/about"
+                className="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Learn more
+              </Link>
+              <Link
+                to="/contact"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gradient-to-r from-pink-500 to-blue-500 hover:from-pink-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl group"
+              >
+                Get Started
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </div>
-          
-          <h1 className="heading-xl text-reveal stagger-1">
-            <span className="text-gradient dark:text-gradient-dark">Creative</span> Developer & Designer
-          </h1>
-          
-          <p className="paragraph text-xl text-reveal stagger-2">
-            I craft engaging digital experiences that combine stunning design with powerful functionality. 
-            Let's build something amazing together.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4 text-reveal stagger-3">
-            <Button asChild size="lg" className="btn-animated bg-portfolio-blue hover:bg-portfolio-purple transition-colors group relative overflow-hidden">
-              <Link to="/projects" className="flex items-center">
-                <span className="relative z-10">View My Work</span>
-                <span className="absolute inset-0 bg-white/20 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform"></span>
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="btn-animated glow-border border-portfolio-blue text-portfolio-blue hover:bg-portfolio-blue hover:text-white dark:border-portfolio-purple dark:text-portfolio-purple dark:hover:bg-portfolio-purple">
-              <Link to="/contact" className="flex items-center">
-                Contact Me <ArrowRight size={18} className="ml-2 transform group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
+
+          {/* Hero Visual */}
+          <div className="relative">
+            <div className="relative mx-auto max-w-md lg:max-w-lg">
+              {/* Phone mockup background */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-purple-400 to-blue-500 rounded-3xl transform rotate-6 scale-105 opacity-20 animate-pulse"></div>
+                <div className="relative bg-gray-900 dark:bg-gray-800 rounded-3xl p-2 shadow-2xl dark:shadow-gray-900/50">
+                  <div className="bg-gray-800 dark:bg-gray-700 rounded-2xl p-6 space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-blue-500 rounded-lg"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-3 bg-gray-600 dark:bg-gray-500 rounded w-3/4"></div>
+                        <div className="h-2 bg-gray-700 dark:bg-gray-600 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="h-32 bg-gradient-to-br from-pink-400 to-blue-500 rounded-lg"></div>
+                      <div className="space-y-2">
+                        <div className="h-3 bg-gray-600 dark:bg-gray-500 rounded"></div>
+                        <div className="h-3 bg-gray-700 dark:bg-gray-600 rounded w-5/6"></div>
+                        <div className="h-3 bg-gray-700 dark:bg-gray-600 rounded w-4/6"></div>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <div className="flex-1 h-8 bg-gray-700 dark:bg-gray-600 rounded"></div>
+                      <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-blue-500 rounded"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating elements */}
+              <div className="absolute -top-4 -right-4 w-16 h-16 bg-yellow-300 dark:bg-yellow-400 rounded-full opacity-80 animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+              <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-pink-400 dark:bg-pink-300 rounded-full opacity-80 animate-bounce" style={{ animationDelay: '1s' }}></div>
+            </div>
           </div>
         </div>
-      </div>
-      
-      {/* Abstract shapes with enhanced animations */}
-      <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-portfolio-blue/10 blur-3xl animate-float"></div>
-      <div className="absolute bottom-20 -right-10 w-60 h-60 rounded-full bg-portfolio-purple/10 blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-      <div className="absolute top-2/3 left-1/4 w-20 h-20 rounded-full bg-portfolio-pink/10 blur-xl animate-float" style={{ animationDelay: '2s' }}></div>
-      
-      {/* New floating elements */}
-      <div className="absolute top-1/3 right-1/4 w-16 h-16 rounded-full bg-portfolio-blue/5 dark:bg-portfolio-blue/20 blur-lg animate-float" style={{ animationDelay: '1.5s' }}></div>
-      <div className="absolute bottom-1/3 left-1/3 w-24 h-24 rounded-full bg-portfolio-purple/5 dark:bg-portfolio-purple/20 blur-xl animate-float" style={{ animationDelay: '0.5s' }}></div>
-      
-      {/* Decorative elements */}
-      <div className="absolute top-40 left-20 hidden md:block">
-        <div className="w-8 h-8 border-2 border-portfolio-blue/20 dark:border-portfolio-blue/40 rounded-full animate-spin-slow"></div>
-      </div>
-      <div className="absolute bottom-40 right-20 hidden md:block">
-        <div className="w-12 h-12 border-2 border-portfolio-purple/20 dark:border-portfolio-purple/40 rounded-md rotate-45 animate-float" style={{ animationDelay: '1.2s' }}></div>
       </div>
     </section>
   );

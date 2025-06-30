@@ -195,7 +195,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1 text-gray-800 dark:text-gray-200">Location</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Ameerpet, Hyderabad</p>
+                      <p className="text-gray-600 dark:text-gray-400">New Delhi</p>
                       <p className="text-gray-600 dark:text-gray-400">India</p>
                     </div>
                   </CardContent>

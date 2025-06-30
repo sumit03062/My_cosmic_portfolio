@@ -15,11 +15,12 @@ const Projects = () => {
       title: 'AI Interview Mocker',
       description: 'Developed a React-based web application simulating AI-driven mock interviews to assist users in interview preparation.',
       category: 'Web Development',
-      image: '',
+      image: 'https://d2b1cooxpkirg1.cloudfront.net/publicAssets/mock-interviews/how-it-works-3.png',
       tools: ['React', 'Node.js', 'MongoDB', 'Stripe'],
       liveLink: 'https://example.com',
       githubLink: 'https://github.com/sumit03062/AI-Interview-Mocker'
     },
+
     {
       id: 2,
       title: 'Student Management System (Django) ',
@@ -45,10 +46,10 @@ const Projects = () => {
       title: 'Chat bot',
       description: '',
       category: 'React',
-      image: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f36?q=80&w=2087',
+      image: 'image/chatbot.jpg',
       tools: ['React, Tailwind, Gemini Api'],
-      liveLink: '',
-      githubLink:''
+      liveLink: 'https://chat-bot-react-seven.vercel.app/',
+      githubLink:'https://github.com/sumit03062/ChatBot-React'
     },
     {
       id: 5,
@@ -56,20 +57,31 @@ const Projects = () => {
       description: '',
       category: 'Web Development',
       image: 'https://images.unsplash.com/photo-1655720828018-edd2daec9349?q=80&w=2070',
-      tools: ['React',  'Node.js', 'PostgreSQL'],
-      liveLink: 'https://example.com',
-      githubLink: 'https://github.com'
+      tools: ['React','Next.js',  'Node.js', 'PostgreSQL'],
+      liveLink: 'https://vastra-verse-e-comm.vercel.app/',
+      githubLink: 'https://github.com/sumit03062/VastraVerse-E-comm'
     },
     {
       id: 6,
       title: 'portfoilo',
       description: 'A mobile app that helps users track workouts, set goals, monitor progress, and connect with fitness communities.',
       category: 'Web Development',
-      image: 'https://images.unsplash.com/photo-1576678927484-cc907957088c?q=80&w=2087',
+      image: 'image/portfolio.jpg',
       tools: ['Flutter', 'Firebase', 'Google Fit API'],
-      liveLink: 'https://example.com',
-      githubLink: 'https://github.com'
-    }
+      liveLink: 'https://my-cosmic-portfolio-phi.vercel.app/',
+      githubLink: 'https://github.com/sumit03062/My_cosmic_portfolio'
+    },
+
+    {
+      id: 7,
+      title: 'Artists Hub',
+      description: 'Developed a React-based web application simulating AI-driven mock interviews to assist users in interview preparation.',
+      category: 'Web Development',
+      image: 'https://d2b1cooxpkirg1.cloudfront.net/publicAssets/mock-interviews/how-it-works-3.png',
+      tools: ['React','Next.js', 'Node.js', 'MongoDB', 'Stripe'],
+      liveLink: 'https://artist-platform-eosin.vercel.app/',
+      githubLink: 'https://github.com/sumit03062/Artist-platform'
+    },
   ];
   
   const filteredProjects = activeCategory === 'All' 
