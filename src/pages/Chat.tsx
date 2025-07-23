@@ -2,52 +2,75 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Send, User, Clock, ChevronDown } from 'lucide-react';
+import { Send, User, Clock, ChevronDown, Bot, Code, Lightbulb } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { subscribeToMessages, sendMessage, FirebaseMessage } from '@/services/chatService';
+import { subscribeToMessages, sendMessage, FirebaseMessage, generateSessionId } from '@/services/chatService';
 
 interface Message {
   id: string | number;
   content: string;
-  sender: 'user' | 'owner';
+  sender: 'user' | 'owner' | 'bot';
   timestamp: Date;
+  isBot?: boolean;
 }
 
 const ChatPage = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [sessionId] = useState(() => generateSessionId());
   const messageEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([
-        {
-          id: 'initial',
-          content: "Hello! Thanks for visiting my portfolio. How can I help you today?",
-          sender: 'owner',
-          timestamp: new Date(Date.now() - 1000 * 60 * 5)
-        }
-      ]);
-    }
+    // Initialize with welcome message
+    setMessages([
+      {
+        id: 'welcome',
+        content: `👋 **Hello! I'm Sumit Kumar, your Full Stack Development Assistant!**
+
+I'm here to help you with:
+- **Frontend**: React, Next.js, TypeScript, Tailwind CSS
+- **Backend**: Python/Django, Node.js, APIs  
+- **Databases**: MongoDB, MySQL, PostgreSQL
+- **Deployment**: Firebase, AWS, Vercel
+- **UI/UX**: Design systems, responsive layouts
+
+**Quick Start Questions:**
+- "Help me build a React app"
+- "How to create an API with Django?"
+- "Database design for e-commerce"
+- "Deploy my app to Firebase"
+- "Tell me about your projects"
+
+What development challenge can I help you solve today? 🚀`,
+        sender: 'bot',
+        timestamp: new Date(),
+        isBot: true
+      }
+    ]);
 
     const unsubscribe = subscribeToMessages((firebaseMessages: FirebaseMessage[]) => {
       if (firebaseMessages.length > 0) {
         const formattedMessages: Message[] = firebaseMessages.map(msg => ({
           id: msg.id,
           content: msg.content,
-          sender: msg.sender === 'admin' ? 'owner' : 'user',
-          timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
+          sender: msg.sender === 'admin' ? 'owner' : msg.sender === 'bot' ? 'bot' : 'user',
+          timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+          isBot: msg.isBot || msg.sender === 'bot'
         }));
-        setMessages(formattedMessages);
+        
+        // Filter out the welcome message if we have real messages
+        if (formattedMessages.length > 0) {
+          setMessages(formattedMessages);
+        }
       }
-    });
+    }, false, sessionId);
 
     return () => unsubscribe();
-  }, []);
+  }, [sessionId]);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -65,33 +88,19 @@ const ChatPage = () => {
 
     setMessages(prev => [...prev, userMessage]);
     setMessage('');
+    setIsTyping(true);
 
     try {
-      await sendMessage(message, 'visitor'); // 'visitor' maps to 'user'
-      setIsTyping(true);
-
-      setTimeout(async () => {
-        const responses = [
-          "Thanks for your message! I'll get back to you as soon as possible.",
-          "That's an interesting question. Let me think about that for a moment.",
-          "I appreciate your interest! Would you like to discuss this further over a call?",
-          "Great point! I've worked on several projects like that before.",
-          "I'd be happy to help with your project. Could you provide more details?"
-        ];
-
-        const responseContent = responses[Math.floor(Math.random() * responses.length)];
-
-        await sendMessage(responseContent, 'admin'); // 'admin' maps to 'owner'
-
+      await sendMessage(message, 'visitor', { sessionId });
+      
+      // Stop typing indicator after bot responds
+      setTimeout(() => {
         setIsTyping(false);
+      }, 3000);
 
-        toast({
-          title: "New message received",
-          description: "You have a new response in your chat."
-        });
-      }, 1500);
     } catch (error) {
       console.error("Error sending message:", error);
+      setIsTyping(false);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
@@ -110,52 +119,125 @@ const ChatPage = () => {
   const formatTime = (date: Date) =>
     date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+  const formatMessage = (content: string) => {
+    // Convert markdown-like formatting to HTML
+    return content
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">$1</code>')
+      .replace(/\n/g, '<br/>');
+  };
+
+  const quickQuestions = [
+    "Help me build a React app",
+    "How to create APIs with Django?",
+    "Database design best practices",
+    "Deploy to Firebase",
+    "Tell me about your projects"
+  ];
+
   return (
     <>
       {/* Header Section */}
-      <motion.section initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative pt-28 pb-16">
-        <div className="text-center max-w-3xl mx-auto">
-          <motion.h1 className="heading-xl mb-6 text-gradient">Let's Chat</motion.h1>
-          <motion.p className="text-xl">Have questions or want to discuss a project? I'm here to help!</motion.p>
+      <motion.section 
+        initial={{ opacity: 0, y: -20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.6 }} 
+        className="relative pt-28 pb-16 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+      >
+        <div className="text-center max-w-4xl mx-auto px-4">
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <Code className="w-8 h-8 text-white" />
+            </div>
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <Bot className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <motion.h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Full Stack Development Assistant
+          </motion.h1>
+          <motion.p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Get instant help with React, Django, databases, deployment, and more! 
+            I'm here to solve your development challenges 24/7.
+          </motion.p>
         </div>
       </motion.section>
 
       {/* Chat Section */}
-      <motion.section initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} className="py-16">
-        <div className="max-w-4xl mx-auto">
-          <Tabs defaultValue="chat">
-            <TabsList className="w-full mb-6">
-              <TabsTrigger value="chat" className="flex-1">Live Chat</TabsTrigger>
-              <TabsTrigger value="faq" className="flex-1">FAQ</TabsTrigger>
+      <motion.section 
+        initial={{ opacity: 0, y: 30 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ delay: 0.2, duration: 0.6 }} 
+        className="py-16 px-4"
+      >
+        <div className="max-w-5xl mx-auto">
+          <Tabs defaultValue="chat" className="w-full">
+            <TabsList className="w-full mb-6 bg-gray-100 dark:bg-gray-800">
+              <TabsTrigger value="chat" className="flex-1 flex items-center gap-2">
+                <Bot size={18} />
+                AI Assistant Chat
+              </TabsTrigger>
+              <TabsTrigger value="faq" className="flex-1 flex items-center gap-2">
+                <Lightbulb size={18} />
+                Quick Help
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="chat">
-              <Card className="border-none shadow-lg overflow-hidden">
+              <Card className="border-none shadow-2xl overflow-hidden bg-white dark:bg-gray-800">
                 {/* Chat Header */}
-                <div className="bg-portfolio-blue text-white p-4 flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                      <User size={20} />
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                        <Bot size={24} />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold">Sumit Kumar - Dev Assistant</h3>
+                        <p className="text-sm opacity-90">Full Stack Developer • Always Online</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold">Sumit Kumar</h3>
-                      <p className="text-xs opacity-80">Usually responds within 1 hour</p>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-sm">Online</span>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                    <ChevronDown size={20} />
-                  </Button>
                 </div>
 
                 {/* Messages */}
                 <CardContent className="p-0">
-                  <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900/50">
+                  <div className="h-[500px] overflow-y-auto p-6 space-y-6 bg-gray-50 dark:bg-gray-900/50">
                     <AnimatePresence>
                       {messages.map((msg) => (
-                        <motion.div key={msg.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} layout className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[70%] rounded-lg p-3 ${msg.sender === 'user' ? 'bg-portfolio-blue text-white rounded-tr-none' : 'bg-white dark:bg-gray-800 shadow-md rounded-tl-none'}`}>
-                            <p>{msg.content}</p>
-                            <div className={`text-xs mt-1 flex items-center ${msg.sender === 'user' ? 'text-white/70 justify-end' : 'text-gray-500 dark:text-gray-400'}`}>
+                        <motion.div 
+                          key={msg.id} 
+                          initial={{ opacity: 0, y: 20 }} 
+                          animate={{ opacity: 1, y: 0 }} 
+                          exit={{ opacity: 0, y: -20 }}
+                          layout 
+                          className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div className={`max-w-[80%] rounded-2xl p-4 shadow-lg ${
+                            msg.sender === 'user' 
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-tr-sm' 
+                              : msg.isBot 
+                                ? 'bg-white dark:bg-gray-800 border-2 border-blue-100 dark:border-blue-900 rounded-tl-sm'
+                                : 'bg-gray-200 dark:bg-gray-700 rounded-tl-sm'
+                          }`}>
+                            {msg.isBot && (
+                              <div className="flex items-center space-x-2 mb-3 pb-2 border-b border-blue-100 dark:border-blue-900">
+                                <Bot size={16} className="text-blue-600 dark:text-blue-400" />
+                                <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">AI Assistant</span>
+                              </div>
+                            )}
+                            <div 
+                              className={`${msg.isBot ? 'prose prose-sm max-w-none dark:prose-invert' : ''}`}
+                              dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
+                            />
+                            <div className={`text-xs mt-2 flex items-center ${
+                              msg.sender === 'user' ? 'text-white/70 justify-end' : 'text-gray-500 dark:text-gray-400'
+                            }`}>
                               <Clock size={12} className="mr-1" />
                               {formatTime(msg.timestamp)}
                             </div>
@@ -165,11 +247,25 @@ const ChatPage = () => {
                     </AnimatePresence>
 
                     {isTyping && (
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="flex justify-start">
-                        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-md rounded-tl-none">
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        exit={{ opacity: 0, y: 10 }} 
+                        className="flex justify-start"
+                      >
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border-2 border-blue-100 dark:border-blue-900 rounded-tl-sm">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Bot size={16} className="text-blue-600 dark:text-blue-400" />
+                            <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">AI Assistant is typing...</span>
+                          </div>
                           <div className="flex space-x-1">
                             {[0, 0.2, 0.4].map((delay, i) => (
-                              <motion.div key={i} animate={{ scale: [0.8, 1.2, 0.8] }} transition={{ repeat: Infinity, duration: 1, ease: "easeInOut", delay }} className="w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-300" />
+                              <motion.div 
+                                key={i} 
+                                animate={{ scale: [0.8, 1.2, 0.8] }} 
+                                transition={{ repeat: Infinity, duration: 1, ease: "easeInOut", delay }} 
+                                className="w-2 h-2 rounded-full bg-blue-400 dark:bg-blue-300" 
+                              />
                             ))}
                           </div>
                         </div>
@@ -178,59 +274,119 @@ const ChatPage = () => {
                     <div ref={messageEndRef} />
                   </div>
 
+                  {/* Quick Questions */}
+                  <div className="px-6 py-4 bg-gray-100 dark:bg-gray-800 border-t">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick questions:</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {quickQuestions.map((question, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setMessage(question)}
+                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-xs hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                        >
+                          {question}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Input */}
-                  <div className="p-4 border-t bg-white dark:bg-gray-800">
-                    <div className="flex space-x-2">
+                  <div className="p-6 border-t bg-white dark:bg-gray-800">
+                    <div className="flex space-x-3">
                       <Textarea
-                        placeholder="Type your message here..."
-                        className="resize-none dark:bg-gray-700"
+                        placeholder="Ask me anything about full-stack development..."
+                        className="resize-none dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyDown={handleKeyDown}
+                        rows={2}
                       />
                       <Button
                         onClick={handleSendMessage}
-                        className="bg-portfolio-blue hover:bg-portfolio-purple"
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-6"
                         disabled={!message.trim()}
                       >
                         <Send size={18} />
                       </Button>
                     </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      Press Enter to send • Shift+Enter for new line
+                    </p>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
             <TabsContent value="faq">
-              <Card className="border-none shadow-lg">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-6 text-center text-gradient dark:text-gradient-dark">Frequently Asked Questions</h2>
-                  <div className="space-y-6">
+              <Card className="border-none shadow-2xl bg-white dark:bg-gray-800">
+                <CardContent className="p-8">
+                  <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Development Help Center
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {[
                       {
-                        question: "What services do you offer?",
-                        answer: "I offer web development, UI/UX design, mobile app development, and branding services."
+                        category: "Frontend Development",
+                        icon: "🎨",
+                        questions: [
+                          "How to build React components?",
+                          "State management with Redux/Context",
+                          "Responsive design with Tailwind CSS",
+                          "TypeScript best practices"
+                        ]
                       },
                       {
-                        question: "How much do your services cost?",
-                        answer: "My rates vary depending on the scope and requirements of each project."
+                        category: "Backend Development", 
+                        icon: "⚡",
+                        questions: [
+                          "Creating REST APIs with Django",
+                          "Node.js and Express setup",
+                          "Database integration",
+                          "Authentication & Authorization"
+                        ]
                       },
                       {
-                        question: "What is your typical process for a new project?",
-                        answer: "My process includes discovery, planning, design, development, testing, and launch."
+                        category: "Database Design",
+                        icon: "🗄️", 
+                        questions: [
+                          "MongoDB vs MySQL comparison",
+                          "Database schema design",
+                          "Query optimization",
+                          "Data relationships"
+                        ]
                       },
                       {
-                        question: "How long does a typical project take?",
-                        answer: "A simple website might take 2-4 weeks, while more complex apps can take longer."
-                      },
-                      {
-                        question: "Do you offer maintenance services?",
-                        answer: "Yes, I offer ongoing support including updates, security patches, and feature additions."
+                        category: "Deployment & DevOps",
+                        icon: "🚀",
+                        questions: [
+                          "Deploy to Firebase/Vercel",
+                          "Docker containerization", 
+                          "CI/CD with GitHub Actions",
+                          "Environment configuration"
+                        ]
                       }
-                    ].map((faq, i) => (
-                      <div key={i} className="border-b pb-6 last:border-b-0 last:pb-0 dark:border-gray-700">
-                        <h3 className="text-xl font-semibold mb-2 dark:text-white">{faq.question}</h3>
-                        <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
+                    ].map((section, i) => (
+                      <div key={i} className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6">
+                        <div className="flex items-center space-x-3 mb-4">
+                          <span className="text-2xl">{section.icon}</span>
+                          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">{section.category}</h3>
+                        </div>
+                        <div className="space-y-3">
+                          {section.questions.map((question, j) => (
+                            <button
+                              key={j}
+                              onClick={() => {
+                                setMessage(question);
+                                // Switch to chat tab
+                                const chatTab = document.querySelector('[value="chat"]') as HTMLElement;
+                                chatTab?.click();
+                              }}
+                              className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                            >
+                              {question}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>

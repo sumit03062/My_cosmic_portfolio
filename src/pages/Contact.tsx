@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +16,8 @@ import {
   FormMessage 
 } from '@/components/ui/form';
 import { Mail, Phone, MapPin, Send, Clock } from 'lucide-react';
+import { functions } from '@/lib/firebase';
+import { httpsCallable } from 'firebase/functions';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -40,16 +41,35 @@ const Contact = () => {
     }
   });
   
-  const onSubmit = (data: FormValues) => {
-    console.log("Form data:", data);
-    
-    // Simulate form submission
-    toast({
-      title: "Message sent successfully!",
-      description: "I'll get back to you as soon as possible.",
-    });
-    
-    form.reset();
+  const onSubmit = async (data: FormValues) => {
+    try {
+      // Call Firebase Function to send email
+      const sendEmail = httpsCallable(functions, 'emailService');
+      
+      const response = await sendEmail({
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
+        type: 'contact'
+      });
+
+      console.log("Email sent successfully:", response);
+      
+      toast({
+        title: "Message sent successfully!",
+        description: "Thank you for reaching out. I'll get back to you soon!",
+      });
+      
+      form.reset();
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast({
+        title: "Error sending message",
+        description: "Please try again later or contact me directly at iamsumitK03@gmail.com",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -141,9 +161,10 @@ const Contact = () => {
                       <Button
                         type="submit" 
                         className="w-full bg-portfolio-blue hover:bg-portfolio-purple text-white dark:bg-portfolio-purple dark:hover:bg-portfolio-blue"
+                        disabled={form.formState.isSubmitting}
                       >
                         <Send className="mr-2" size={16} />
-                        Send Message
+                        {form.formState.isSubmitting ? 'Sending...' : 'Send Message'}
                       </Button>
                     </form>
                   </Form>
@@ -170,7 +191,7 @@ const Contact = () => {
                     <div>
                       <h3 className="font-semibold mb-1 text-gray-800 dark:text-gray-200">Email</h3>
                       <p className="text-gray-600 dark:text-gray-400">iamsumitK03@gmail.com</p>
-                      <p className="text-gray-600 dark:text-gray-400">sr8171067@gmail.com.com</p>
+                      <p className="text-gray-600 dark:text-gray-400">sr8171067@gmail.com</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -195,7 +216,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1 text-gray-800 dark:text-gray-200">Location</h3>
-                      <p className="text-gray-600 dark:text-gray-400">New Delhi</p>
+                      <p className="text-gray-600 dark:text-gray-400">Ameerpet, Hyderabad</p>
                       <p className="text-gray-600 dark:text-gray-400">India</p>
                     </div>
                   </CardContent>
@@ -218,8 +239,15 @@ const Contact = () => {
               {/* Map */}
               <Card className="border-none shadow-lg overflow-hidden dark:bg-gray-800/80">
                 <CardContent className="p-0 h-[300px]">
-                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15225.712917879695!2d78.4343206312346!3d17.43920620685769!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb90c55bb43183%3A0x1abc135b23ee2703!2sAmeerpet%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1748321486245!5m2!1sen!2sin" width="100%" height="100%" style={{ border: 0 }}  allowFullScreen 
-                    loading="lazy"  title="Location Map"></iframe>
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15225.712917879695!2d78.4343206312346!3d17.43920620685769!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb90c55bb43183%3A0x1abc135b23ee2703!2sAmeerpet%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1748321486245!5m2!1sen!2sin" 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 0 }}  
+                    allowFullScreen 
+                    loading="lazy"  
+                    title="Location Map"
+                  />
                 </CardContent>
               </Card>
             </div>

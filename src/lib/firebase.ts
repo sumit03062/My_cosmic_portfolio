@@ -1,15 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDOddX7Sv2JpibdPPDwaNrxkCYtfSh9t5U",
   authDomain: "my-portfolio-e5fa7.firebaseapp.com",
@@ -22,8 +19,34 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Initialize services
 export const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-export { db, storage };
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+export const functions = getFunctions(app);
+
+// Initialize Analytics (only in browser)
+let analytics;
+if (typeof window !== 'undefined') {
+  analytics = getAnalytics(app);
+}
+export { analytics };
+
+// Auth providers
+export const googleProvider = new GoogleAuthProvider();
+
+// Auth helper functions
+export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
+export const signOutUser = () => signOut(auth);
+export const onAuthChange = (callback: (user: any) => void) => onAuthStateChanged(auth, callback);
+
+// Connect to emulators in development
+if (process.env.NODE_ENV === 'development') {
+  // Uncomment these lines if you want to use Firebase emulators
+  // connectFirestoreEmulator(db, 'localhost', 8080);
+  // connectStorageEmulator(storage, 'localhost', 9199);
+  // connectFunctionsEmulator(functions, 'localhost', 5001);
+}
+
+export default app;
